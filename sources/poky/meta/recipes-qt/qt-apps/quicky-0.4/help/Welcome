@@ -1,0 +1,48 @@
+== About ==
+
+'''Quicky''' is a simple note-taking application with Wiki-style syntax and behaviour.
+
+Quicky differentiates between ''Editing'' and ''Browsing'' modes. The former is done in plain text, using a simple markup language. The latter displays the result as formatted HTML. In addition to textual formatting, browsing mode also provides hyperlink-style navigation, for quick transition between linked documents.
+
+== Getting Started ==
+
+Quicky only works with named files. A file path can be provided on the command line, or via the '''File|Open''' command. A new file is created by the '''File|New''' command, but a valid file path must be given before the file can be viewed/edited. 
+
+When a file is opened, its directory is set as the program's current, so links or from that file are followed based on their relative paths. Thus, the current directory serves as a set of connected documents that can link to each other by their file names only. It is also possible to specify absolute paths in links, links to external documents. The latter are opened by executing a command line, as specified in the '''Settings|External Links''' menu option.
+
+New files are created automatically when a link points to a non-existing file.
+
+Use the '''Edit|Edit Mode''' command to switch between browsing and editing modes. While editing, links cannot be followed, and the navigation commands are disabled (to prevent accidental data loss). Switching back to browsing mode saves the contents of the editor, as does a manual invocation of the '''File|Save''' command.
+
+== Formatting Help ==
+
+=== Text Formatting ===
+''Italics''
+ ''Italics''
+'''Bold'''
+ '''Bold'''
+'''''Bold italics'''''
+ '''''Bold italics'''''
+
+A blank line starts a new paragraph.
+
+A space at the beginning of a line indicates a pre-formatted block, to which quicky does not apply any formatting:
+ This is a preformatted block.
+ Every line in this block starts with a space.
+
+=== Titles ===
+
+ = Heading 1 =
+ == Heading 2 ==
+ === Heading 3 ===
+ ==== Heading 4 ====
+
+=== Lists ===
+ * Bullet list item
+ # Numbered list item
+=== Links ===
+
+Standard link (where URL is a file name, file path or fully qualified URL)
+ [[url]]
+Named link
+ [[url|text to show]]
