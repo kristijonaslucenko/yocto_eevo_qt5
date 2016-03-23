@@ -1,0 +1,244 @@
+start:
+
+timeout 360
+
+print "Ready for flashing."
+print "Connect USB pen drive and establish serial connection to CCU."
+print "Select booting from serial option and power up the CCU."
+
+set try 0
+
+sleep 2
+
+expect {
+	"CCCC"
+	timeout 120 goto panic
+}
+
+# Sending MLO as soon as Cs apear
+mlo:
+	! sx -b MLO
+
+expect {
+	"barebox 2015.09.0 #1" break
+	"CCCC" goto mlo
+	timeout 120 goto panic
+}
+
+expect {
+	"CCC"
+	timeout 120 goto panic
+}
+
+barebox:
+
+! sx -b barebox.bin
+
+expect {
+	"Hit m for menu or any other key to stop autoboot" break
+	"CCC" goto barebox
+	timeout 180 goto panic
+}
+
+# Entering the barebox
+
+send w
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+# Probing USB and automounting
+
+usb:
+
+send usb
+
+inc try
+
+expect {
+	"unable to get device descriptor" goto usberror
+	"1 USB Device(s) found" break
+	"0 USB Device(s) found" goto nousb
+	timeout 60 goto panic
+}
+
+send mkdir -p /mnt/fat
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send automount -d /mnt/fat 'usb && [ -e /dev/disk0.0 ] && mount /dev/disk0.0 /mnt/fat'
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send cd mnt/fat/
+send ls
+
+expect {
+	"oftree" break
+	timeout 60 goto panic
+}
+
+send erase /dev/nand0.kernel.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send erase /dev/nand0.oftree.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send erase /dev/nand0.barebox.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send erase /dev/nand0.xload.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+
+send cp /mnt/fat/linuximage /dev/nand0.kernel.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send cp /mnt/fat/oftree /dev/nand0.oftree.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send cp /mnt/fat/barebox.bin /dev/nand0.barebox.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send cp /mnt/fat/MLO /dev/nand0.xload.bb
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send ubiformat /dev/nand0.root
+
+expect {
+	"ubiformat: formatting eraseblock" break
+	timeout 100 goto panic
+}
+
+expect {
+	"100 % complete" break
+	timeout 100 goto panic
+}
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send ubiattach /dev/nand0.root
+
+expect {
+	"UBI: attached mtd0" break
+	timeout 60 goto panic
+}
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send ubimkvol /dev/nand0.root.ubi root 0
+
+expect {
+	"registering root as /dev/nand0.root.ubi.root" break
+	timeout 60 goto panic
+}
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 60 goto panic
+}
+
+send cp /mnt/fat/eevo-headless-image-ccu-eevo.ubifs /dev/nand0.root.ubi.root
+
+expect {
+	"barebox@Phytec phyCORE AM335x" break
+	timeout 180 goto panic
+}
+
+send boot nand
+
+expect {
+	"ccu-eevo login:" break
+}
+
+send root
+
+expect {
+	"root@ccu-eevo" break
+}
+
+send shutdown
+
+expect {
+	"Shutdown scheduled" break
+	timeout 60 goto panic
+}
+
+sleep 2
+
+print ""
+print "Flashing is complete, the system is running fine"
+print ""
+
+! killall -9 minicom
+
+exit
+
+panic:
+print "Unexpected error, exiting"
+! killall -9 minicom
+
+nousb:
+if try > 2 goto hasnousb
+print "No USB pen drive is found. Please connect one within 10 seconds"
+sleep 10
+goto usb
+
+hasnousb:
+print "No usb detected withing 2 attempts, shutting down"
+goto killminicom
+
+usberror:
+print "Unexpected error, unable to get FD for USB, must restart process"
+print "Restart CCU"
+goto start
+
+killminicom:
+! killall -9 minicom
+
