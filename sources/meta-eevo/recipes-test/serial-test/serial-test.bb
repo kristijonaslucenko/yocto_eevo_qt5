@@ -24,6 +24,6 @@ do_compile() {
 }
 
 do_install() {
-	install -d ${D}${bindir}
-	install -m 0755 serial-test ${D}${bindir}
+		install -d ${D}${bindir}
+		install -m 0755 serial-test ${D}${bindir}
 }

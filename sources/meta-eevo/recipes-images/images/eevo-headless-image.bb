@@ -1,4 +1,4 @@
-SUMMARY = "Phytec's headless image"
+SUMMARY = "Eevo's headless image"
 DESCRIPTION = "no graphics support in this image"
 LICENSE = "MIT"
 inherit core-image
@@ -19,8 +19,13 @@ IMAGE_INSTALL = " \
     packagegroup-base \
     ${@bb.utils.contains("MACHINE_FEATURES", "alsa", "packagegroup-audio", "", d)} \
     serial-test \
+    flashingscript \
+    hotplugwatcher \
+    minicom \
     qtest \
     sound \
+    gnupg \
+    libarchive \
     qtbase \
     qtbase-plugins \
     qtbase-fonts \

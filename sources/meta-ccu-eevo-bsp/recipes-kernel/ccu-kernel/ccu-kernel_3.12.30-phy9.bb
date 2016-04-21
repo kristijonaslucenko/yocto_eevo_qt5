@@ -3,7 +3,7 @@
 
 DESCRIPTION =   "Linux Kernel provided and supported by PHYTEC based on TIs \
                 Kernel for AM335x Family Boards. It includes support for \
-                many IPs such as GPU, VPU and IPU."
+                many IPs such as GPU, VPU and IPU.ddddddddddd"
 
 include linux-common.inc
 inherit git_auth
@@ -25,7 +25,9 @@ S = "${WORKDIR}/git"
 PR = "${INC_PR}.0"
 
 # NOTE: Keep version in filename in sync with commit id!
-SRCREV = "03f565ed7131f319a041e314aeb7d161aad4b52c"
+SRCREV = "d64ebf5c3a7fcd5ec4c3e9f4657ab4b271563547"
+
+# SRCREV = "03f565ed7131f319a041e314aeb7d161aad4b52c"
 
 COMPATIBLE_MACHINE = "ccu-eevo"
 

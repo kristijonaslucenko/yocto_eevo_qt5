@@ -3,13 +3,13 @@ require barebox-ipl.inc
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/ccu-bootloader/features:"
 
-SRC_URI = "git://github.com/${USER}/ccu-bootloader.git;branch=v2015.09.0-phy"
+SRC_URI = "git://github.com/${USER}/${REPO}.git;branch=v2015.09.0-phy"
 
 S = "${WORKDIR}/git"
 
 PR = "${INC_PR}.0"
 
-SRCREV = "0f034be57e539212af84dfd53e70faadac40e6f3"
+SRCREV = "${SRCREVP}"
 
 SRC_URI_append = " file://noafiboard.cfg"
 
