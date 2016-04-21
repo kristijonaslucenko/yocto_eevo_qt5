@@ -16,13 +16,14 @@ IMAGE_FSTYPES += "tar.gz"
 IMAGE_FSTYPES += "ubifs"
 DEPLOY_DIR = "${TOPDIR}/deploy"
 
-# The default package class of the distro yogurt is 'package_ipk'. The first
+# The default package class of the distro eevo is 'package_ipk'. The first
 # value is used as the package manager to build the image and sdk. To build
 # also tar packages use
-#PACKAGE_CLASSES = "package_ipk package_tar"
+PACKAGE_CLASSES = "package_ipk"
 
 #SDKMACHINE ?= "x86_64"
-EXTRA_IMAGE_FEATURES = "debug-tweaks"
+EXTRA_IMAGE_FEATURES = "debug-tweaks ssh-server-openssh package-management"
+IMAGE_INSTALL_append = " opkg "
 
 OE_TERMINAL = "auto"
 PATCHRESOLVE = "noop"
@@ -38,8 +39,7 @@ BB_DISKMON_DIRS = "\
 
 CONF_VERSION = "1"
 
-DL_DIR ?= "/home/kristijonas/yocto_eevo_qt/downloads"
+DL_DIR ?= "/home/kristijonas/yocto_new/downloads"
 
-BB_NUMBER_THREADS = "8"
-
-PARALLEL_MAKE = "-j16"
+BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()*2}"
+PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()*2}"
