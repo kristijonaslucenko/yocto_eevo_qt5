@@ -1,0 +1,20 @@
+# 
+# Hotplugwatcher init. Logs storage device entries
+# 
+
+[Unit]
+Description=Log storage device entries
+
+DefaultDependencies=no
+After=sysinit.target
+Before=shutdown.target
+Conflicts=shutdown.target
+
+[Service]
+Type=simple
+ExecStart=-/usr/bin/nohup hotplugwatcher >/dev/null 2>&1 &
+ExecStop=-/usr/bin/killall hotplugwatcher
+
+[Install]
+WantedBy=sysinit.target
+

@@ -1,0 +1,13 @@
+SUMMARY = "A simple Qt test, prints "test" 10 times"
+
+LICENSE = "CLOSED"
+
+SRC_URI = "file://devmonitor.tar.gz "
+
+S = "${WORKDIR}"
+
+inherit qt4e
+
+
+# QMAKE_PROFILES = "${S}/hotplugwatcher.pro"
+
